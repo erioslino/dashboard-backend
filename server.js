@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 
 const app = express();
-const port = 3306;
+const port = 57431;
 
 // Middlewares: Permitir conexión desde React y parsear JSON
 app.use(cors());
