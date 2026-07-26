@@ -12,10 +12,10 @@ app.use(express.json());
 
 // 1. Configuración de conexión a MySQL (XAMPP por defecto es root sin clave)
 const db = mysql.createConnection({
-  host: 'sakura.proxy.rlwy.net',
-  user: 'root',
-  password: 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN', 
-  database: 'railway'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD, 
+  database: process.env.DB_NAME
 });
 
 db.connect(err => {
