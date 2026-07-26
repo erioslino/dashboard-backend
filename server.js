@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 
 const app = express();
-const port = 3306;
+const port = 57431;
 
 // Middlewares: Permitir conexión desde React y parsear JSON
 app.use(cors());
@@ -11,7 +11,7 @@ app.use(express.json());
 
 // 1. Configuración de conexión a MySQL (XAMPP por defecto es root sin clave)
 const db = mysql.createConnection({
-  host: 'mysql.railway.internal',
+  host: 'sakura.proxy.rlwy.net',
   user: 'root',
   password: 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN', 
   database: 'railway'
