@@ -11,7 +11,7 @@ app.use(express.json());
 
 // 1. Configuración de conexión a MySQL (XAMPP por defecto es root sin clave)
 const db = mysql.createConnection({
-  host: 'https://dashboard-backend-production-9f7d.up.railway.app/',
+  host: 'mysql.railway.internal',
   user: 'root',
   password: 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN', 
   database: 'railway'
