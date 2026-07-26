@@ -5,15 +5,15 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-// Middlewares: Permitir conexi髇 desde React y parsear JSON
+// Middlewares: Permitir conexi贸n desde React y parsear JSON
 app.use(cors());
 app.use(express.json());
 
-// 1. Configuraci髇 de conexi髇 a MySQL (XAMPP por defecto es root sin clave)
+// 1. Configuraci贸n de conexi贸n a MySQL (XAMPP por defecto es root sin clave)
 const db = mysql.createConnection({
-  host: 'localhost',
+  host: 'https://dashboard-backend-production-9f7d.up.railway.app/',
   user: 'root',
-  password: '', 
+  password: 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN', 
   database: 'smrp_dashboard'
 });
 
@@ -22,7 +22,7 @@ db.connect(err => {
     console.error('Error conectando a la base de datos MySQL:', err);
     return;
   }
-  console.log('Conexi髇 exitosa a MySQL (smrp_dashboard).');
+  console.log('Conexi贸n exitosa a MySQL (smrp_dashboard).');
 });
 
 // 2. ENDPOINT: Obtener todos los registros (Lectura para el Dashboard)
@@ -30,7 +30,7 @@ app.get('/api/kpis', (req, res) => {
   const query = 'SELECT * FROM kpi_mensual ORDER BY mes ASC';
   db.query(query, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
-    // Parseamos a num閞ico para que el frontend (Recharts) los procese bien
+    // Parseamos a num茅rico para que el frontend (Recharts) los procese bien
     const formattedResults = results.map(row => ({
       ...row,
       disponibilidad: Number(row.disponibilidad),
