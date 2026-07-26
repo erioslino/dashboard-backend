@@ -16,7 +16,8 @@
   },
   "devDependencies": {},
   "description": ""
-}
-"scripts": {
+  
+  "scripts": {
   "build": "npm install --omit=dev && tsc"
+  },
 }
