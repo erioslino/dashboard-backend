@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = 3306;
 
 // Middlewares: Permitir conexión desde React y parsear JSON
 app.use(cors());
@@ -14,7 +14,7 @@ const db = mysql.createConnection({
   host: 'https://dashboard-backend-production-9f7d.up.railway.app/',
   user: 'root',
   password: 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN', 
-  database: 'smrp_dashboard'
+  database: 'railway'
 });
 
 db.connect(err => {
