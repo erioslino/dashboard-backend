@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
+    "npm install --omit=dev"
   },
   "keywords": [],
   "author": "",
@@ -16,4 +17,4 @@
   },
   "devDependencies": {},
   "description": ""
-}
+} 
