@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMRP Maintenance Engineering Dashboard</title>
+    <!-- Usamos Tailwind CSS vía CDN para un diseño rápido y moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js vía CDN para las gráficas de tendencia -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin para mostrar etiquetas de datos sobre barras -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+     <!-- Plugin para ejecutar el backend -->
+    <script src="funciones.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans p-6">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Encabezado -->
+        <header class="bg-slate-900 text-white p-6 rounded-xl shadow-lg flex justify-between items-center border-b-4 border-blue-500">
+            <div>
+                <h1 class="text-2xl font-bold">SMRP - Maintenance Engineering Dashboard</h1>
+                <p class="text-slate-400 text-sm">Asset Reliability & Performance System (IDM-2026)</p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="bg-blue-600 px-4 py-2 rounded font-semibold transition">Ver Dashboard</button>
+                <button onclick="switchTab('registro')" id="btn-registro" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded font-semibold transition">Nuevo Registro</button>
+            </div>
+        </header>
+
+        <!-- VISTA: DASHBOARD -->
+        <div id="vista-dashboard" class="space-y-6">
+            
+            <!-- Filtros por Fechas -->
+            <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white p-3 px-5 font-semibold text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    Parámetros de Consulta
+                </div>
+                <div class="p-4 flex flex-wrap gap-4 items-end">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-600">Desde (Mes)</label>
+                        <input type="month" id="filtro-inicio" class="border border-slate-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-slate-600">Hasta (Mes)</label>
+                        <input type="month" id="filtro-fin" class="border border-slate-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                    <button onclick="aplicarFiltro()" class="bg-indigo-600 text-white px-5 py-2 rounded font-semibold hover:bg-indigo-700 transition shadow">Aplicar Filtro</button>
+                    <button onclick="limpiarFiltro()" class="bg-slate-200 text-slate-700 px-5 py-2 rounded font-semibold hover:bg-slate-300 transition">Limpiar</button>
+                </div>
+            </div>
+
+            <!-- Tarjetas de Resumen -->
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4" id="kpi-cards">
+                <!-- Se llenarán dinámicamente con JS -->
+            </div>
+
+            <!-- GRÁFICOS PRINCIPALES: Reloj, Barras 1, Barras 2, Termómetros -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Reloj OEE -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 flex flex-col overflow-hidden">
+                    <div class="bg-slate-800 text-white p-3 text-center text-sm font-bold uppercase">Estado OEE</div>
+                    <div class="p-6 w-full relative h-48 flex items-center justify-center">
+                        <canvas id="relojChart"></canvas>
+                        <!-- El texto en el centro del medio círculo -->
+                        <div id="relojTexto" class="absolute bottom-6 text-3xl font-black text-slate-700">0%</div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Barras 1: Factores -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 flex flex-col overflow-hidden">
+                    <div class="bg-slate-800 text-white p-3 text-center text-sm font-bold uppercase">Factores (D, E, C)</div>
+                    <div class="p-6 w-full h-48">
+                        <canvas id="barrasChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Barras 2: Resultados Globales -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 flex flex-col overflow-hidden">
+                    <div class="bg-slate-800 text-white p-3 text-center text-sm font-bold uppercase">Resultados (OEE, TEEP, Util)</div>
+                    <div class="p-6 w-full h-48">
+                        <canvas id="barrasResultadosChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Termómetros -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="bg-slate-800 text-white p-3 text-center text-sm font-bold uppercase">Gráficas de Barras Verticales</div>
+                    <div id="termometros-container" class="p-6 space-y-4 flex-grow flex flex-col justify-center">
+                        <!-- Se llenará dinámicamente con JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Tendencia -->
+            <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white p-4 font-semibold text-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h3 class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        Tendencia Global de Indicadores
+                    </h3>
+                    
+                    <!-- NUEVOS CONTROLES DE GRÁFICO -->
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs text-slate-300 font-normal">Métricas:</label>
+                            <select id="vistaMetricas" onchange="actualizarGraficoTendencia()" class="bg-slate-700 text-white text-sm rounded border border-slate-600 px-2 py-1 outline-none">
+                                <option value="principales">OEE y TEEP</option>
+                                <option value="factores">Factores (Disp, Efic, Cal)</option>
+                                <option value="todos">Todos los Indicadores</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs text-slate-300 font-normal">Tipo:</label>
+                            <select id="tipoGrafico" onchange="actualizarGraficoTendencia()" class="bg-slate-700 text-white text-sm rounded border border-slate-600 px-2 py-1 outline-none">
+                                <option value="line">Líneas</option>
+                                <option value="bar">Barras</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <canvas id="tendenciaChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Tabla de Datos -->
+            <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-800 text-white border-b border-slate-700 font-semibold flex justify-between items-center cursor-pointer hover:bg-slate-700 transition-colors" onclick="toggleTabla()">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                        Historial de Registros en la Base de Datos
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-slate-300 font-normal">
+                        <span id="tabla-estado">Contraer</span>
+                        <svg id="icono-tabla" class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
+                <div id="tabla-contenedor" class="transition-all duration-300 origin-top">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 uppercase">
+                            <tr>
+                                <th class="px-4 py-3">Mes</th>
+                                <th class="px-4 py-3">Equipo</th>
+                                <th class="px-4 py-3">Disp.</th>
+                                <th class="px-4 py-3">Efic.</th>
+                                <th class="px-4 py-3">Calidad</th>
+                                <th class="px-4 py-3 text-amber-600">Util.</th>
+                                <th class="px-4 py-3 text-green-600">OEE</th>
+                                <th class="px-4 py-3 text-blue-600">TEEP</th>
+                                <th class="px-4 py-3">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-body" class="divide-y divide-slate-200">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA: REGISTRO (Formulario) -->
+        <div id="vista-registro" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 bg-white p-6 rounded-xl shadow border border-slate-200">
+                <h2 class="text-xl font-bold border-b pb-2 mb-4">Registrar Nuevo Mes</h2>
+                <form id="kpiForm" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-semibold mb-1">Mes</label><input type="month" id="mes" required class="w-full border p-2 rounded" oninput="actualizarTiempoTotal(); verificarDuplicado()"></div>
+                        <div><label class="block text-sm font-semibold mb-1">Equipo/Sistema</label><input type="text" id="equipo" value="Linea 1" required class="w-full border p-2 rounded" oninput="verificarDuplicado()"></div>
+                    </div>
+
+                    <!-- Mensaje de advertencia dinámico de Duplicidad -->
+                    <div id="warning-duplicado" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 text-sm font-semibold shadow-sm rounded-r">
+                        ⚠️ Advertencia: Ya existe un registro para el Mes seleccionado. El botón de guardado ha sido bloqueado.
+                    </div>
+
+                    <div class="p-4 bg-indigo-50 rounded border border-indigo-100">
+                        <h3 class="font-bold text-indigo-800 mb-2">Tiempos (Horas)</h3>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div><label class="text-xs">Tiempo Total</label><input type="number" id="tiempoTotal" value="720" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                            <div><label class="text-xs">Downtime Programado</label><input type="number" id="dtProgramado" value="24" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                            <div><label class="text-xs">Downtime No Programado</label><input type="number" id="dtNoProgramado" value="48" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                            <div><label class="text-xs">Idle Time</label><input type="number" id="idleTime" value="120" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                        </div>
+                        <div class="mt-3 p-2 bg-indigo-100 rounded text-indigo-900 text-sm font-bold flex justify-between">
+                            <span>Uptime (Calculado Automáticamente):</span>
+                            <span id="uptime-val">0 Hrs</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-purple-50 rounded border border-purple-100">
+                        <h3 class="font-bold text-purple-800 mb-2">Rendimiento</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div><label class="text-xs">Parámetro</label><input type="text" id="parametro" value="Ton/Hr" class="w-full border p-1 rounded"></div>
+                            <div><label class="text-xs">Capacidad Nominal</label><input type="number" id="capNominal" value="1000" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                            <div><label class="text-xs">Capacidad Actual</label><input type="number" id="capActual" value="850" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-rose-50 rounded border border-rose-100">
+                        <h3 class="font-bold text-rose-800 mb-2">Calidad</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="text-xs">Producción Total del periodo</label><input type="number" id="prodTotal" value="10000" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                            <div><label class="text-xs">Producción fuera de Especificacion Mala</label><input type="number" id="prodMala" value="200" min="0" step="0.01" oninput="calcularVivo()" class="w-full border p-1 rounded"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded hover:bg-blue-700 transition-colors">Guardar en Base de Datos</button>
+                </form>
+            </div>
+
+            <!-- Previsualización -->
+            <div class="bg-slate-800 text-white p-6 rounded-xl shadow h-fit sticky top-6">
+                <h3 class="text-lg font-bold border-b border-slate-600 pb-2 mb-4">Pre-cálculo Mensual</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between text-indigo-300 border-b border-slate-700 pb-2 mb-2"><span>Uptime</span><span id="prev-uptime" class="font-bold">-</span></div>
+                    <div class="flex justify-between"><span>Disponibilidad</span><span id="prev-disp" class="font-bold">-</span></div>
+                    <div class="flex justify-between"><span>Eficiencia</span><span id="prev-efic" class="font-bold">-</span></div>
+                    <div class="flex justify-between"><span>Calidad</span><span id="prev-cal" class="font-bold">-</span></div>
+                    <div class="flex justify-between text-amber-400"><span>Utilización</span><span id="prev-util" class="font-bold">-</span></div>
+                    <div class="mt-4 pt-4 border-t border-slate-600">
+                        <div class="text-emerald-400 text-2xl font-black mb-2">OEE: <span id="prev-oee">-</span></div>
+                        <div class="text-blue-400 text-2xl font-black">TEEP: <span id="prev-teep">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FOOTER: Créditos del Autor -->
+        <footer class="mt-12 border-t border-slate-200 pt-6 pb-4 text-center text-slate-500 text-sm">
+            <p class="font-bold text-slate-700 text-base mb-1">Desarrollado por: Eduardo Rios</p>
+            <p>Ingeniero de Mantenimiento Planta de Amoniaco y Urea</p>
+            <p class="mt-2 text-xs text-slate-400">© 2026 | SMRP Asset Reliability Metrics (IDM-PAU 2026)</p>
+        </footer>
+
+    </div>
+</body>
+</html>
