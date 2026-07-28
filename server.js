@@ -80,10 +80,10 @@ app.delete('/api/kpis/:id', (req, res) => {
 });
 
 // Arrancar el servidor
-//app.listen(port, () => {
-//console.log(`API de Confiabilidad corriendo en http://localhost:${port}`);
-//});
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
+app.listen(port, () => {
+console.log(`API de Confiabilidad corriendo en http://localhost:${port}`);
 });
+
+//app.listen(PORT, "0.0.0.0", () => {
+//  console.log(`Servidor corriendo en el puerto ${PORT}`);
+//});
