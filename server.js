@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const app = express();
 //const port = 57431;
-const PORT = process.env.PORT || 3000;
+//const PORT = process.env.PORT || 3000;
 
 // Middlewares: Permitir conexión desde React y parsear JSON
 app.use(cors());
@@ -16,7 +16,7 @@ const db = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD, 
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT
+  port: process.env.DB_PORT || 3000
 });
 
 db.connect(err => {
