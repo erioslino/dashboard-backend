@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 3000;
 // Middlewares: Permitir conexión desde React y parsear JSON
 app.use(cors());
 app.use(express.json());
+// Servir la página web y archivos estáticos
+app.use(express.static(__dirname));
 
 // 1. Configuración de conexión a MySQL
 // CORRECCIÓN: Se agregaron las comas (,) necesarias al final de cada línea
