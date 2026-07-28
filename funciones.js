@@ -3,7 +3,7 @@ Chart.register(ChartDataLabels);
 
 // 1. CONFIGURACIÓN
 //const API_URL = 'http://localhost:3000/api'; conexion a base de datos mysql localhost 
-const API_URL = 'http://dashboard-backend-production-94b6.up.railway.app'; //Conexion remota la base de datos mysql
+const API_URL = 'https://dashboard-backend-production-94b6.up.railway.app/api'; //Conexion remota la base de datos mysql
 let chartInstance = null;
 let relojInstance = null;
 let barrasInstance = null;
