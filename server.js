@@ -3,21 +3,21 @@ const mysql = require('mysql2');
 const cors = require('cors');
 
 const app = express();
-//const port = 57431;
 const PORT = process.env.PORT || 3000;
 
 // Middlewares: Permitir conexión desde React y parsear JSON
 app.use(cors());
 app.use(express.json());
 
-// 1. Configuración de conexión a MySQL (XAMPP por defecto es root sin clave)
+// 1. Configuración de conexión a MySQL
+// CORRECCIÓN: Se agregaron las comas (,) necesarias al final de cada línea
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost'
-  user: process.env.DB_USER || 'root'
-  password: process.env.DB_PASSWORD || 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN'
-  database: process.env.DB_NAME || 'railway'
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN',
+  database: process.env.DB_NAME || 'railway',
   port: process.env.DB_PORT || 3306
-})
+});
 
 db.connect(err => {
   if (err) {
@@ -80,10 +80,7 @@ app.delete('/api/kpis/:id', (req, res) => {
 });
 
 // Arrancar el servidor
-app.listen(port, () => {
-console.log(`API de Confiabilidad corriendo en http://localhost:${port}`);
+// CORRECCIÓN: Se usa PORT en mayúsculas y "0.0.0.0" para compatibilidad con contenedores (Railway)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`API de Confiabilidad corriendo en el puerto ${PORT}`);
 });
-
-//app.listen(PORT, "0.0.0.0", () => {
-//  console.log(`Servidor corriendo en el puerto ${PORT}`);
-//});
