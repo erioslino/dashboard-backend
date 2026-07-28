@@ -80,7 +80,7 @@ app.delete('/api/kpis/:id', (req, res) => {
 });
 
 // Arrancar el servidor
-// CORRECCIÓN: Se usa PORT en mayúsculas y "0.0.0.0" para compatibilidad con contenedores (Railway)
+//CORRECCIÓN: Se usa PORT en mayúsculas y "0.0.0.0" para compatibilidad con contenedores (Railway)
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`API de Confiabilidad corriendo en el puerto ${PORT}`);
 });
