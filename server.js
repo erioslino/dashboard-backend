@@ -19,7 +19,7 @@ const db = mysql.createPool({
   user: process.env.MYSQLUSER || 'root',
   password: process.env.MYSQLPASSWORD || 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN',
   database: process.env.MYSQLDATABASE || 'railway',
-  port: process.env.MYSQLPORT || 3306
+  port: process.env.MYSQLPORT || 3306,
     
   // Nuevas opciones para el Pool:
   waitForConnections: true,
