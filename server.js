@@ -27,12 +27,22 @@ const db = mysql.createPool({
   queueLimit: 0
 });
 
-db.connect(err => {
+//db.connect(err => {
+//  if (err) {
+//   console.error('Error conectando a la base de datos MySQL:', err);
+//  return;
+//  }
+//  console.log('Conexión exitosa a MySQL (smrp_dashboard).');
+//});
+
+// NUEVA FORMA (Para verificar que el Pool funciona al arrancar)
+db.getConnection((err, connection) => {
   if (err) {
-    console.error('Error conectando a la base de datos MySQL:', err);
-    return;
+    console.error('Error al conectar con el Pool de MySQL:', err);
+  } else {
+    console.log('Conexión exitosa al Pool de MySQL');
+    connection.release(); // Libera la conexión para que otros la usen
   }
-  console.log('Conexión exitosa a MySQL (smrp_dashboard).');
 });
 
 // 2. ENDPOINT: Obtener todos los registros (Lectura para el Dashboard)
