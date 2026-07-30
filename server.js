@@ -1,15 +1,11 @@
-const cors = require('cors');
-app.use(cors()); // Esto permite que cualquier frontend se conecte
-
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Middlewares: Permitir conexión desde React y parsear JSON
-app.use(cors());
+app.use(cors()); // Esto permite que cualquier frontend se conecte
 app.use(express.json());
 // Servir la página web y archivos estáticos
 app.use(express.static(__dirname));
