@@ -1,3 +1,6 @@
+const cors = require('cors');
+app.use(cors()); // Esto permite que cualquier frontend se conecte
+
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
