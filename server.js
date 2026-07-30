@@ -13,12 +13,18 @@ app.use(express.static(__dirname));
 
 // 1. Configuración de conexión a MySQL
 // CORRECCIÓN: Se agregaron las comas (,) necesarias al final de cada línea
-const db = mysql.createConnection({
+//const db = mysql.createConnection({
+const db = mysql.createPool({
   host: process.env.MYSQLHOST || 'localhost',
   user: process.env.MYSQLUSER || 'root',
   password: process.env.MYSQLPASSWORD || 'dlgGkasTifnllFcSDXEqSzRgULbeCqfN',
   database: process.env.MYSQLDATABASE || 'railway',
   port: process.env.MYSQLPORT || 3306
+    
+  // Nuevas opciones para el Pool:
+  waitForConnections: true,
+  connectionLimit: 10,  // Número máximo de conexiones simultáneas
+  queueLimit: 0
 });
 
 db.connect(err => {
